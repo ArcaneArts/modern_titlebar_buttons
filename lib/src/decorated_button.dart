@@ -1,6 +1,6 @@
+import 'package:arcane/arcane.dart';
 import 'package:change_case/change_case.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:modern_titlebar_buttons/src/get_theme.dart';
 import 'package:modern_titlebar_buttons/src/theme_type.dart';
@@ -158,47 +158,83 @@ class _RawDecoratedTitlebarButtonState
 
   @override
   Widget build(BuildContext context) {
-    final type = widget.type != null && widget.type != ThemeType.auto
-        ? widget.type!
-        : ThemeType.values.firstWhere(
-            (element) => theme.toParamCase().contains(
-                  describeEnum(element).toParamCase(),
-                ),
-            orElse: () => ThemeType.adwaita,
-          );
+    ThemeType type =
+        widget.type != null && widget.type != ThemeType.auto
+            ? widget.type!
+            : ThemeType.values.firstWhere(
+              (element) => theme.toParamCase().contains(
+                describeEnum(element).toParamCase(),
+              ),
+              orElse: () => ThemeType.adwaita,
+            );
 
-    final themeName = describeEnum(type).toParamCase();
-    final themeColor = type == ThemeType.pop ||
-            type == ThemeType.arc ||
-            type == ThemeType.materia ||
-            type == ThemeType.unity
-        ? Theme.of(context).brightness == Brightness.dark
-            ? '-dark'
-            : '-light'
-        : '';
+    String themeName = describeEnum(type).toParamCase();
+    String themeColor =
+        type == ThemeType.pop ||
+                type == ThemeType.arc ||
+                type == ThemeType.materia ||
+                type == ThemeType.unity
+            ? Theme.of(context).brightness == Brightness.dark
+                ? '-dark'
+                : '-light'
+            : '';
 
-    final state = isActive
-        ? '-active'
-        : isHovering
+    String state =
+        isActive
+            ? '-active'
+            : isHovering
             ? '-hover'
             : '';
 
-    final fileName = '${widget.name}$state.svg';
-    final prefix = 'packages/modern_titlebar_buttons/assets/themes'
+    String fileName = '${widget.name}$state.svg';
+    String prefix =
+        'packages/modern_titlebar_buttons/assets/themes'
         '/$themeName$themeColor/';
-
-    final themePath = prefix +
+    String themePath =
+        prefix +
         (File(prefix + fileName).existsSync()
             ? fileName
             : '${widget.name}.svg');
 
-    void onEntered({required bool hover}) => setState(
-          () => isHovering = hover,
-        );
+    void onEntered({required bool hover}) => setState(() => isHovering = hover);
+    void onActive({required bool hover}) => setState(() => isActive = hover);
 
-    void onActive({required bool hover}) => setState(
-          () => isActive = hover,
-        );
+    Color? effectiveColor =
+        type == ThemeType.osxArc
+            ? null
+            : (!isHovering &&
+                    !isActive &&
+                    type == ThemeType.yaru &&
+                    widget.name != 'close' ||
+                type == ThemeType.breeze ||
+                type == ThemeType.elementary ||
+                (!isHovering && !isActive && type == ThemeType.adwaita))
+            ? (Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : Colors.black)
+            : null;
+
+    Widget buttonIcon = SvgPicture.asset(
+      themePath,
+      width: widget.width,
+      height: widget.height,
+      color: effectiveColor,
+    );
+
+    if (type == ThemeType.osxArc) {
+      final double size = widget.width ?? 15.0;
+      buttonIcon = ClipOval(child: buttonIcon);
+      buttonIcon = Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color:
+              isHovering ? Colors.black.withOpacity(0.1) : Colors.transparent,
+        ),
+        child: Center(child: buttonIcon),
+      );
+    }
 
     return MouseRegion(
       onExit: (value) => onEntered(hover: false),
@@ -209,24 +245,12 @@ class _RawDecoratedTitlebarButtonState
         onTapUp: (_) => onActive(hover: false),
         onTap: widget.onPressed,
         child: Container(
-          padding: const EdgeInsets.all(4),
+          padding:
+              type == ThemeType.osxArc
+                  ? EdgeInsets.zero
+                  : const EdgeInsets.all(4),
           constraints: const BoxConstraints(minWidth: 15),
-          child: SvgPicture.asset(
-            themePath,
-            width: widget.width,
-            height: widget.height,
-            color: (!isHovering &&
-                        !isActive &&
-                        type == ThemeType.yaru &&
-                        widget.name != 'close' ||
-                    type == ThemeType.breeze ||
-                    type == ThemeType.elementary ||
-                    !isHovering && !isActive && type == ThemeType.adwaita)
-                ? Theme.of(context).brightness == Brightness.dark
-                    ? Colors.white
-                    : Colors.black
-                : null,
-          ),
+          child: buttonIcon,
         ),
       ),
     );
