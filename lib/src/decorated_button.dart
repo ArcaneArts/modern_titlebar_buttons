@@ -1,6 +1,6 @@
-import 'package:arcane/arcane.dart';
 import 'package:change_case/change_case.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:modern_titlebar_buttons/src/get_theme.dart';
 import 'package:modern_titlebar_buttons/src/theme_type.dart';
@@ -158,40 +158,35 @@ class _RawDecoratedTitlebarButtonState
 
   @override
   Widget build(BuildContext context) {
-    ThemeType type =
-        widget.type != null && widget.type != ThemeType.auto
-            ? widget.type!
-            : ThemeType.values.firstWhere(
-              (element) => theme.toParamCase().contains(
-                describeEnum(element).toParamCase(),
-              ),
-              orElse: () => ThemeType.adwaita,
-            );
+    ThemeType type = widget.type != null && widget.type != ThemeType.auto
+        ? widget.type!
+        : ThemeType.values.firstWhere(
+            (element) => theme.toParamCase().contains(
+                  describeEnum(element).toParamCase(),
+                ),
+            orElse: () => ThemeType.adwaita,
+          );
 
     String themeName = describeEnum(type).toParamCase();
-    String themeColor =
-        type == ThemeType.pop ||
-                type == ThemeType.arc ||
-                type == ThemeType.materia ||
-                type == ThemeType.unity
-            ? Theme.of(context).brightness == Brightness.dark
-                ? '-dark'
-                : '-light'
-            : '';
+    String themeColor = type == ThemeType.pop ||
+            type == ThemeType.arc ||
+            type == ThemeType.materia ||
+            type == ThemeType.unity
+        ? Theme.of(context).brightness == Brightness.dark
+            ? '-dark'
+            : '-light'
+        : '';
 
-    String state =
-        isActive
-            ? '-active'
-            : isHovering
+    String state = isActive
+        ? '-active'
+        : isHovering
             ? '-hover'
             : '';
 
     String fileName = '${widget.name}$state.svg';
-    String prefix =
-        'packages/modern_titlebar_buttons/assets/themes'
+    String prefix = 'packages/modern_titlebar_buttons/assets/themes'
         '/$themeName$themeColor/';
-    String themePath =
-        prefix +
+    String themePath = prefix +
         (File(prefix + fileName).existsSync()
             ? fileName
             : '${widget.name}.svg');
@@ -199,10 +194,9 @@ class _RawDecoratedTitlebarButtonState
     void onEntered({required bool hover}) => setState(() => isHovering = hover);
     void onActive({required bool hover}) => setState(() => isActive = hover);
 
-    Color? effectiveColor =
-        type == ThemeType.osxArc
-            ? null
-            : (!isHovering &&
+    Color? effectiveColor = type == ThemeType.osxArc
+        ? null
+        : (!isHovering &&
                     !isActive &&
                     type == ThemeType.yaru &&
                     widget.name != 'close' ||
@@ -245,10 +239,9 @@ class _RawDecoratedTitlebarButtonState
         onTapUp: (_) => onActive(hover: false),
         onTap: widget.onPressed,
         child: Container(
-          padding:
-              type == ThemeType.osxArc
-                  ? EdgeInsets.zero
-                  : const EdgeInsets.all(4),
+          padding: type == ThemeType.osxArc
+              ? EdgeInsets.zero
+              : const EdgeInsets.all(4),
           constraints: const BoxConstraints(minWidth: 15),
           child: buttonIcon,
         ),
