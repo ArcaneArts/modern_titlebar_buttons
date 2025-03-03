@@ -1,17 +1,17 @@
 name: modern_titlebar_buttons
 description: A package which provides most of the title bar buttons from windows, linux and macos. forked from titlebar_buttons
-version: 1.1.1
+version: 1.1.2
 repository: https://github.com/ArcaneArts/modern_titlebar_buttons
 environment:
   sdk: ^3.7.0
 dependencies:
   flutter:
     sdk: flutter
-  dbus: ^0.7.11
-  flutter_svg: ^2.0.17
-  gsettings: ^0.2.8
-  universal_io: ^2.2.2
-  change_case: 2.2.0
+  dbus: ">=0.7.11 <1.0.0"
+  flutter_svg: ">=2.0.0 <3.0.0"
+  gsettings: ">=0.2.8 <1.0.0"
+  universal_io: ">=2.2.2 <3.0.0"
+  change_case: ">=2.2.0 <3.0.0"
 dev_dependencies:
   flutter_test:
     sdk: flutter

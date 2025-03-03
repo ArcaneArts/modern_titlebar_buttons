@@ -1,4 +1,5 @@
-# Changelog
+# 1.1.2
+* Remove arcane
 
 # 1.1.1
 
